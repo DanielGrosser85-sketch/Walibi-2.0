@@ -23,7 +23,9 @@ class MainApp {
     if (window.FeedModule) window.FeedModule.init();
     if (window.LeaderboardModule) window.LeaderboardModule.init();
     if (window.ParkGuideModule) window.ParkGuideModule.init();
+    if (window.ParkMapModule) window.ParkMapModule.init();
     if (window.AwardsModule) window.AwardsModule.init();
+    if (window.SympathyModule) window.SympathyModule.init();
     if (window.CameraModule) window.CameraModule.init();
 
     if (window.store) {
@@ -32,22 +34,75 @@ class MainApp {
       });
     }
 
+    this.updateHappyHourBanner();
+    setInterval(() => {
+      this.updateHappyHourBanner();
+    }, 1000);
+
+    // Kontinuierlicher Promille-Abbau Live-Ticker (alle 15 Sek. prüfen & Dashboard aktualisieren)
+    setInterval(() => {
+      const curUser = window.store && window.store.state ? window.store.state.currentUser : null;
+      if (curUser && (curUser.drinksCount > 0 || (Array.isArray(curUser.drinksHistory) && curUser.drinksHistory.length > 0))) {
+        if (window.FeedModule && window.FeedModule.renderPersonalDrinksTracker) {
+          window.FeedModule.renderPersonalDrinksTracker();
+        }
+      }
+    }, 15000);
+
     console.log("🎢 Mr. oder Mrs. Walibi Challenge App erfolgreich gestartet!");
   }
 
   // --- 🛡️ SMART NAVIGATION & ANDROID HARDWARE BACK-BUTTON TRAPPING ---
   setupNavigationHistory() {
     this.lastBackPressTime = 0;
-    this.modalStack = [];
 
-    // Basis-State setzen
+    // Sofort 2 Einträge im History-Stack erzeugen (Root-State und Aktiver State), damit der Zurück-Button immer in der App gefangen wird
     try {
-      history.replaceState({ tab: this.currentTab, isRoot: true }, "");
+      history.replaceState({ appState: 'root', tab: this.currentTab }, "");
+      history.pushState({ appState: 'active', tab: this.currentTab }, "");
     } catch(e) {}
+
+    // Auf jede Touch- / Click-Interaktion sicherstellen, dass der Puffer immer aktiv ist
+    const ensureBuffer = () => {
+      try {
+        if (!history.state || history.state.appState !== 'active') {
+          history.pushState({ appState: 'active', tab: this.currentTab }, "");
+        }
+      } catch(e) {}
+    };
+    window.addEventListener("touchstart", ensureBuffer, { passive: true });
+    window.addEventListener("click", ensureBuffer, { passive: true });
+
+    // MutationObserver: Automatisch pushState wenn ein beliebiges Modal geöffnet wird
+    this.setupModalHistoryObserver();
 
     window.addEventListener("popstate", (e) => {
       this.handlePopState(e);
     });
+  }
+
+  setupModalHistoryObserver() {
+    try {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+          if (mutation.type === "attributes" && mutation.attributeName === "class") {
+            const target = mutation.target;
+            if (target && target.classList && target.classList.contains("modal-overlay")) {
+              const isVisible = !target.classList.contains("hidden");
+              if (isVisible && target.id !== "accessCodeModal") {
+                try {
+                  history.pushState({ appState: 'modal', modalId: target.id }, "");
+                } catch(e) {}
+              }
+            }
+          }
+        });
+      });
+
+      document.querySelectorAll(".modal-overlay").forEach(modal => {
+        observer.observe(modal, { attributes: true, attributeFilter: ["class"] });
+      });
+    } catch(e) {}
   }
 
   handlePopState(e) {
@@ -65,11 +120,15 @@ class MainApp {
         window.QuestsModule.closeModal();
       } else if (modalId === "myProfileModal" && window.ProfileModule) {
         window.ProfileModule.closeMyProfileModal();
+      } else if (modalId === "parkMapModal" && window.ParkMapModule) {
+        window.ParkMapModule.closeModal();
       } else if (modalId === "gameEndedCelebrationModal" && window.AwardsModule) {
         window.AwardsModule.closeCelebrationModal();
+      } else if (modalId === "sympathyVoteModal" && window.SympathyModule) {
+        window.SympathyModule.closeVoteModal();
       } else if (modalId === "accessCodeModal") {
         // Startmaske bleibt geöffnet
-        try { history.pushState({ modalId: "accessCodeModal" }, ""); } catch(err) {}
+        try { history.pushState({ appState: 'active', modalId: "accessCodeModal" }, ""); } catch(err) {}
         return;
       } else {
         topModal.classList.add("hidden");
@@ -77,9 +136,9 @@ class MainApp {
 
       if (window.GameAudio) window.GameAudio.playClick();
 
-      // History-State wiederherstellen, damit man in der App bleibt
+      // History-Buffer sofort wiederherstellen, damit der nächste Klick abgefangen wird
       try {
-        history.pushState({ tab: this.currentTab }, "");
+        history.pushState({ appState: 'active', tab: this.currentTab }, "");
       } catch (err) {}
       return;
     }
@@ -87,8 +146,9 @@ class MainApp {
     // 2. Kein Modal offen -> Prüfen, ob wir in einem Untertab sind
     if (this.currentTab !== "feed") {
       this.switchTab("feed", false);
+      if (window.GameAudio) window.GameAudio.playClick();
       try {
-        history.pushState({ tab: "feed" }, "");
+        history.pushState({ appState: 'active', tab: "feed" }, "");
       } catch(err) {}
       return;
     }
@@ -101,8 +161,9 @@ class MainApp {
     } else {
       this.lastBackPressTime = now;
       this.showToast("👆 Tippe noch einmal auf Zurück, um die App zu verlassen.");
+      // Puffer sofort wiederherstellen
       try {
-        history.pushState({ tab: "feed", isRoot: true }, "");
+        history.pushState({ appState: 'active', tab: "feed" }, "");
       } catch (err) {}
     }
   }
@@ -221,6 +282,7 @@ class MainApp {
   }
 
   renderAllViews() {
+    this.updateHappyHourBanner();
     if (window.ProfileModule) window.ProfileModule.updateHeaderProfile();
     if (window.FeedModule) {
       window.FeedModule.renderHeaderStats();
@@ -229,6 +291,32 @@ class MainApp {
     if (this.currentTab === "quests" && window.QuestsModule) window.QuestsModule.renderQuests();
     if (this.currentTab === "attractions" && window.ParkGuideModule) window.ParkGuideModule.render();
     if (this.currentTab === "leaderboard" && window.LeaderboardModule) window.LeaderboardModule.renderLeaderboard();
+  }
+
+  updateHappyHourBanner() {
+    const banner = document.getElementById("happyHourLiveBanner");
+    const countdownEl = document.getElementById("happyHourCountdown");
+    if (!banner) return;
+
+    const isHH = window.store && window.store.isHappyHourActive();
+    if (isHH) {
+      banner.classList.remove("hidden");
+      banner.style.display = "flex";
+      const hh = window.store.state.happyHour;
+      const remainingMs = Math.max(0, new Date(hh.endsAt).getTime() - Date.now());
+      const mins = Math.floor(remainingMs / 60000);
+      const secs = Math.floor((remainingMs % 60000) / 1000);
+      if (countdownEl) {
+        countdownEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+    } else {
+      banner.classList.add("hidden");
+      banner.style.display = "none";
+    }
+
+    if (window.ProfileModule && document.getElementById("adminModal") && !document.getElementById("adminModal").classList.contains("hidden")) {
+      window.ProfileModule.updateAdminHappyHourUI();
+    }
   }
 
   setupPhotoViewerModal() {
@@ -246,16 +334,21 @@ class MainApp {
     const container = document.getElementById("toastContainer");
     if (!container) return;
 
+    if (!this.recentToasts) this.recentToasts = new Set();
+    if (this.recentToasts.has(message)) return; // Verhindert 3-fache Duplikat-Toasts
+    this.recentToasts.add(message);
+    setTimeout(() => this.recentToasts.delete(message), 2500);
+
     const toast = document.createElement("div");
     toast.className = "toast-message";
     toast.innerHTML = message;
     container.appendChild(toast);
 
-    // Verlängerte Anzeigedauer (6,5 Sekunden) damit Sprüche & Infos bequem gelesen werden können
+    // Verlängerte Anzeigedauer (5 Sekunden) damit Sprüche & Infos bequem gelesen werden können
     setTimeout(() => {
       toast.classList.add("fade-out");
       setTimeout(() => toast.remove(), 300);
-    }, 6500);
+    }, 5000);
   }
 
   // --- STRIKT ABWECHSELNDE MASKOTTCHEN SPRÜCHE ROTATION (1x FRED -> 1x WALIBI -> 1x GROSSER) ---
@@ -384,12 +477,12 @@ class MainApp {
     const modal = document.getElementById("quickMenuModal");
     if (!modal) return;
     
-    // Admin Button im Quick Menu prüfen – NUR für echten Admin grossek
+    // Admin Buttons im Quick Menu nur für Admin (grossek mit PIN 1008) anzeigen
+    const isGrossekAdmin = window.ProfileModule && typeof window.ProfileModule.isAdminUser === "function" && window.ProfileModule.isAdminUser();
     const adminBtn = document.getElementById("menuAdminBtn");
-    if (adminBtn) {
-      const isGrossek = window.ProfileModule && window.ProfileModule.isAdminUser && window.ProfileModule.isAdminUser();
-      adminBtn.style.display = isGrossek ? "flex" : "none";
-    }
+    const hhBtn = document.getElementById("menuHappyHourBtn");
+    if (adminBtn) adminBtn.style.display = isGrossekAdmin ? "flex" : "none";
+    if (hhBtn) hhBtn.style.display = isGrossekAdmin ? "flex" : "none";
 
     // Sound Status aktualisieren
     const soundLbl = document.getElementById("menuSoundLabel");

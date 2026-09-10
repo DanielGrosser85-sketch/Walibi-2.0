@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Mr. oder Mrs. Walibi - Sauftour '26</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2026_v25" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffcc00" />
 </head>
@@ -38,6 +38,37 @@
         <button class="icon-btn btn-menu-accent" id="btnQuickMenuTrigger" onclick="app.openQuickMenu()" title="⚡ Menü & Werkzeuge">⚡</button>
       </div>
     </header>
+
+    <!-- ⚡ 2X HAPPY HOUR LIVE BANNER -->
+    <div id="happyHourLiveBanner" class="happy-hour-banner hidden">
+      <div class="happy-hour-content">
+        <span class="happy-hour-icon">⚡🍻</span>
+        <div class="happy-hour-text">
+          <strong style="color: #ffcc00; letter-spacing: 0.5px;">⚡ 2X HAPPY HOUR AKTIV!</strong>
+          <span>Aufgaben, Attraktionen, Meilensteine & Posts zählen DOPPELT!</span>
+        </div>
+        <span class="happy-hour-badge" id="happyHourCountdown">60:00</span>
+      </div>
+    </div>
+
+    <!-- 👤 GAST-HINWEIS BANNER (WENN NOCH KEIN SPIELER GEWÄHLT) -->
+    <div id="guestPromptBanner" class="happy-hour-banner hidden" style="background: linear-gradient(135deg, #1e293b, #0f172a); border-color: var(--walibi-yellow); flex-direction: column; align-items: stretch; gap: 8px; padding: 12px 14px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;" onclick="ProfileModule.openProfileSelectModal()">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">👤✨</span>
+          <div style="text-align: left;">
+            <strong style="color: #ffcc00; font-size: 13px; display: block;">NOCH KEIN SPIELER GEWÄHLT!</strong>
+            <span style="color: #cbd5e1; font-size: 11px;">Tippe hier, um Profil anzulegen & mitzuspielen.</span>
+          </div>
+        </div>
+        <span class="happy-hour-badge" style="background: var(--walibi-yellow); color: #000; font-weight: 900; font-size: 12px; padding: 6px 12px; white-space: nowrap;">STARTEN 👉</span>
+      </div>
+      <div style="display: flex; justify-content: flex-end; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 6px;">
+        <button type="button" onclick="event.stopPropagation(); ProfileModule.logout()" style="background: rgba(239, 68, 68, 0.25); border: 1.5px solid #ef4444; color: #fca5a5; font-size: 11px; font-weight: 800; border-radius: 8px; padding: 5px 12px; cursor: pointer;">
+          🚪 Code wechseln / Abmelden
+        </button>
+      </div>
+    </div>
 
     <!-- TOAST NOTIFICATIONS -->
     <div id="toastContainer" class="toast-container"></div>
@@ -93,10 +124,13 @@
         <span class="text-muted" style="font-size: 12px; font-weight: 700;">Live-Timeline</span>
       </div>
 
-      <!-- SPONTANER SOCIAL POST / SCHNAPPSCHUSS BUTTON -->
-      <div style="margin-bottom: 10px;">
-        <button class="btn-create-social-post" id="btnOpenSocialPost">
-          <span>📸</span> Schnappschuss (+10 Pkt) / Status posten (+5 Pkt)
+      <!-- SPONTANER SOCIAL POST / SCHNAPPSCHUSS BUTTON & MEDIA DOWNLOAD -->
+      <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+        <button class="btn-create-social-post" id="btnOpenSocialPost" style="flex: 1.5; margin-bottom: 0;">
+          <span>📸</span> Schnappschuss (+10 Pkt)
+        </button>
+        <button type="button" class="btn-download-feed-zip" id="btnDownloadFeedZip" onclick="FeedModule.downloadFeedMediaZip()" title="Alle Fotos & Videos als ZIP-Archiv herunterladen" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, rgba(255,204,0,0.15), rgba(0,0,0,0.6)); border: 1.5px solid var(--walibi-yellow); color: var(--walibi-yellow); border-radius: 12px; font-size: 12px; font-weight: 800; padding: 10px 8px; cursor: pointer; text-align: center; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+          <span>📦</span> ZIP-Download
         </button>
       </div>
 
@@ -154,10 +188,18 @@
         <h2 class="section-title">🏆 Live-Rangliste</h2>
       </div>
 
-      <!-- SUBTABS: SPIELER / HÄUSER -->
+      <!-- SUBTABS: SPIELER / HÄUSER / PEGEL-TURNIER -->
       <div class="subtabs-row">
         <button class="subtab-btn active" id="btnRankPlayers">👤 Einzelwertung</button>
         <button class="subtab-btn" id="btnRankHouses">🏰 Häuser-Battle</button>
+        <button class="subtab-btn" id="btnRankPromille">🍺 Pegel-Turnier</button>
+      </div>
+
+      <!-- GESCHLECHTER FILTERLEISTE FÜR EINZELWERTUNG & TURNIER -->
+      <div class="leaderboard-gender-filters" id="leaderboardGenderFiltersRow" style="display: flex; gap: 6px; margin-bottom: 12px; justify-content: center; flex-wrap: wrap;">
+        <button class="feed-filter-btn active" id="btnGenderAll" onclick="LeaderboardModule.setGenderFilter('all')">👑 Alle (Gesamt)</button>
+        <button class="feed-filter-btn" id="btnGenderMale" onclick="LeaderboardModule.setGenderFilter('male')">👑 Mr. Walibi</button>
+        <button class="feed-filter-btn" id="btnGenderFemale" onclick="LeaderboardModule.setGenderFilter('female')">👑 Mrs. Walibi</button>
       </div>
 
       <!-- LEADERBOARD LIST -->
@@ -165,12 +207,6 @@
         <!-- Gefüllt per JS -->
       </div>
     </main>
-
-    <!-- FLOATING QUICK-COUNTER FAB -->
-    <button class="floating-counter-fab" id="quickCounterFab" title="Schnellzähler öffnen">
-      <span>🍺</span>
-      <span>Schnellzähler</span>
-    </button>
 
     <!-- BOTTOM NAVIGATION (4 TABS) -->
     <nav class="bottom-nav-bar">
@@ -211,15 +247,14 @@
       </div>
 
       <!-- Foto / Video Upload / Kamera -->
-      <div class="form-group">
-        <label class="form-label">Foto / Schnappschuss hinzufügen (+10 Pkt statt +5 Pkt)</label>
+        <label class="form-label">Foto / Video hinzufügen (+10 Pkt statt +5 Pkt)</label>
         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <button type="button" class="btn-game-camera" style="flex: 1; text-align: center; justify-content: center; cursor: pointer;" onclick="CameraModule.open({ title: '📸 Schnappschuss teilen', facingMode: 'environment', onCapture: (b64, isVid) => FeedModule.setCapturedPhoto(b64, isVid) })">
-            📸 Live-Kamera
+          <button type="button" class="btn-game-camera" style="flex: 1; text-align: center; justify-content: center; cursor: pointer;" onclick="CameraModule.open({ title: '📸 Foto / Video teilen', facingMode: 'environment', onCapture: (b64, isVid) => FeedModule.setCapturedPhoto(b64, isVid) })">
+            📸 Live-Kamera / Video
           </button>
           <label class="btn-game-gallery" style="flex: 1; text-align: center; justify-content: center; cursor: pointer;">
             🖼️ Galerie
-            <input type="file" accept="image/*" id="socialGalleryInput" style="display: none;" />
+            <input type="file" accept="image/*,video/*" id="socialGalleryInput" style="display: none;" />
           </label>
         </div>
         <img id="socialPhotoPreview" class="camera-preview-img hidden" alt="Vorschau" />
@@ -309,25 +344,89 @@
         </div>
       </div>
 
+      <!-- 🍻 HAPPY HOUR 2X PUNKTE STEUERUNG -->
+      <div style="background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(225,29,72,0.2)); border: 2.5px solid var(--walibi-yellow); border-radius: 12px; padding: 14px; margin-bottom: 14px; text-align: center; box-shadow: 0 0 20px rgba(255,204,0,0.25);">
+        <div style="font-size: 11px; font-weight: 900; color: var(--walibi-yellow); text-transform: uppercase; letter-spacing: 1px;">⚡ 2X HAPPY HOUR (1 STUNDE DOPPELTE PUNKTE)</div>
+        <p style="font-size: 12px; color: #e2e8f0; margin: 6px 0 10px 0; line-height: 1.35;">
+          Aktiviert für <strong>60 Minuten</strong> doppelte Punkte auf alle Quests, Posts, Reaktionen, Kommentare & Drinks!
+        </p>
+        <div id="adminHappyHourStatus" style="font-size: 13px; font-weight: 800; color: #34d399; margin-bottom: 8px;">Status: Inaktiv</div>
+        <button type="button" class="btn-primary" id="btnAdminHappyHour" onclick="ProfileModule.adminToggleHappyHour()" style="background: var(--gradient-gold); color: #000; font-weight: 900; border: 2px solid #fff; font-size: 14px; box-shadow: 0 0 15px rgba(255,204,0,0.4);">
+          🍻 2X HAPPY HOUR STARTEN (60 MIN)
+        </button>
+      </div>
+
+      <!-- 👥 SPIELER-VERWALTUNG & LÖSCHEN -->
+      <div style="background: rgba(15,23,42,0.85); border: 2px solid #334155; border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="font-size: 13px; font-weight: 900; color: #fff;">👥 SPIELER VERWALTEN</div>
+          <button type="button" onclick="ProfileModule.adminDeleteAllPlayers()" style="background: rgba(239,68,68,0.2); border: 1.5px solid #ef4444; color: #fca5a5; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 4px 8px; cursor: pointer;">
+            🗑️ Alle löschen
+          </button>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+          Entferne einzelne Test-Spieler oder alle Mitspieler auf einmal (Grossek bleibt erhalten):
+        </p>
+        <div id="adminPlayersManageList" style="max-height: 190px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+      </div>
+
+      <!-- MEDIEN & FEED DOWNLOAD -->
+      <div style="background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; border-radius: 12px; padding: 14px; margin-bottom: 14px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 900; color: #34d399; text-transform: uppercase; letter-spacing: 1px;">📦 MEDIEN & FOTOS DOWNLOAD</div>
+        <p style="font-size: 12px; color: #e2e8f0; margin: 6px 0 10px 0; line-height: 1.35;">
+          Lade alle hochgeladenen Fotos, Videos und die gesamte Chronik der Sauftour als ZIP-Archiv herunter.
+        </p>
+        <button type="button" class="btn-primary" onclick="FeedModule.downloadFeedMediaZip()" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 900; border: 2px solid #34d399; font-size: 14px; box-shadow: 0 0 15px rgba(16,185,129,0.4);">
+          📦 ALLE FOTOS & VIDEOS HERUNTERLADEN (.ZIP)
+        </button>
+      </div>
+
       <!-- GEFAHRENZONE / RESET -->
       <div style="background: rgba(225,29,72,0.15); border: 2px solid #ef4444; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
         <div style="font-size: 14px; font-weight: 900; color: #ef4444; margin-bottom: 4px;">🚨 TESTPHASEN- & TOUR-RESET</div>
         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-          Setzt alle Spieler auf <strong>0 Punkte</strong>, <strong>0 Drinks</strong>, <strong>0 Coaster</strong> zurück und löscht den gesamten Live-Feed.
+          Setzt alle Punkte, Getränke, Coaster-Counts und den Live-Feed auf <strong>0 zurück</strong>.<br/>
+          <strong style="color: #34d399;">✅ Alle angelegten Mitspieler-Profile bleiben erhalten!</strong>
         </p>
-        <button type="button" class="btn-primary" onclick="ProfileModule.adminResetGame()" style="background: var(--gradient-red); border-color: #fff; font-size: 15px;">
-          💥 ALLES AUF NULL SETZEN (RESET)
+        <button type="button" class="btn-primary" onclick="ProfileModule.adminResetGame()" style="background: var(--gradient-red); border-color: #fff; font-size: 14px; font-weight: 900;">
+          💥 PUNKTE & FEED AUF 0 ZURÜCKSETZEN
         </button>
       </div>
 
       <!-- DISPLAY & VOLLBILD -->
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
         <button type="button" class="btn-primary" onclick="ProfileModule.toggleWakeLock()" style="flex: 1; padding: 8px; font-size: 12px; background: #0f766e;">
           ⚡ Display wachhalten
         </button>
         <button type="button" class="btn-primary" onclick="ProfileModule.toggleFullscreen()" style="flex: 1; padding: 8px; font-size: 12px; background: #1e3a8a;">
           📱 Vollbild-Modus
         </button>
+      </div>
+
+      <!-- ABMELDEN -->
+      <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px;">
+        <button type="button" class="btn-primary" onclick="ProfileModule.logout()" style="width: 100%; padding: 8px; font-size: 12px; background: rgba(225,29,72,0.25); border: 1.5px solid #f43f5e; color: #fda4af; font-weight: 800;">
+          🚪 Admin abmelden (Zurück zur Code-Eingabe)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 💖 13. EISBRECHER & SYMPATHIE-VOTING MODAL (VOR DEM ZEUGNIS) -->
+  <div id="sympathyVoteModal" class="modal-overlay hidden" style="z-index: 590; background: rgba(5,8,16,0.97);">
+    <div class="modal-container" style="max-width: 500px; max-height: 92vh; overflow-y: auto; border: 3.5px solid #ec4899; box-shadow: 0 0 35px rgba(236,72,153,0.45);">
+      <div class="modal-header" style="border-bottom: 2px solid rgba(236,72,153,0.3); padding-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">❄️🔨💖</span>
+          <div>
+            <h2 class="modal-title" style="color: #f472b6; font-size: 18px; line-height: 1.2;">EISBRECHER & SYMPATHIE-VOTING</h2>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">Sauftour '26 Finale</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="SympathyModule.closeVoteModal()">✕</button>
+      </div>
+      <div id="sympathyVoteModalBody">
+        <!-- Gefüllt per SympathyModule JS -->
       </div>
     </div>
   </div>
@@ -388,6 +487,53 @@
           <select id="editProfileHouseSelect" class="form-select"></select>
         </div>
 
+        <div class="form-group">
+          <label class="form-label">Kategorie (Mr. / Mrs. Walibi):</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="gender-pill-btn active" id="editGenderMale" onclick="ProfileModule.setEditGender('male')" style="flex: 1; padding: 8px 12px; font-size: 12.5px; font-weight: 800; border-radius: 8px; border: 1.5px solid #60a5fa; background: rgba(59, 130, 246, 0.2); color: #93c5fd; cursor: pointer;">
+              ♂️ Mr. Walibi
+            </button>
+            <button type="button" class="gender-pill-btn" id="editGenderFemale" onclick="ProfileModule.setEditGender('female')" style="flex: 1; padding: 8px 12px; font-size: 12.5px; font-weight: 800; border-radius: 8px; border: 1.5px solid #f472b6; background: rgba(244, 114, 182, 0.2); color: #fbcfe8; cursor: pointer;">
+              ♀️ Mrs. Walibi
+            </button>
+          </div>
+          <input type="hidden" id="editProfileGender" value="male" />
+        </div>
+
+        <!-- RPG CHARAKTER-KLASSE (20 KLASSEN) -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 2px solid var(--walibi-yellow); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 900; color: var(--walibi-yellow); text-transform: uppercase;">🎭 RPG-Klasse (20 Klassen):</span>
+            <span id="myProfileClassCategoryTag" class="map-tag-pill" style="font-size: 10px;">Action</span>
+          </div>
+          <select id="editProfileClassSelect" class="form-select" style="margin-bottom: 8px; font-weight: 800;" onchange="ProfileModule.handleClassSelectChange(this.value)"></select>
+          <div id="myProfileClassInfoBox" style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 8px 10px; font-size: 11.5px; line-height: 1.35;"></div>
+        </div>
+
+        <!-- 5 FUN-STATUSWERTE (1-10 SKALA) -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 2px solid #334155; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 900; color: #38bdf8; text-transform: uppercase; margin-bottom: 4px;">📊 5 Statuswerte (Fun-Stats 1–10):</div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Passe deine Stärken & Schwächen für die Tour an:</p>
+          <div id="myProfileRpgStatsContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- FREIGESCHALTETE TITEL & ERRUNGENSCHAFTEN -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 2px solid rgba(255,204,0,0.4); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 900; color: var(--walibi-yellow); text-transform: uppercase; margin-bottom: 6px;">🎖️ Freigeschaltete Titel (<span id="myProfileTitlesCount">0</span>):</div>
+          <div id="myProfileUnlockedTitlesContainer" style="min-height: 44px;"></div>
+        </div>
+
+        <!-- PEGEL-TURNIER OPT-IN CHECKBOX -->
+        <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid var(--walibi-yellow); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="editProfilePromilleOptIn" style="width: 18px; height: 18px; accent-color: var(--walibi-yellow); cursor: pointer;" checked />
+            <div>
+              <div style="font-weight: 800; font-size: 12px; color: var(--walibi-yellow);">🍺 Am Pegel-Turnier teilnehmen</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">Eigene Messwerte im Gruppen-Leaderboard (Highscore & Konstanz) teilen.</div>
+            </div>
+          </label>
+        </div>
+
         <!-- PERSÖNLICHE STATISTIKEN -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 14px 0;">
           <div style="background: rgba(0,0,0,0.4); border: 1.5px solid rgba(255,255,255,0.15); padding: 8px 10px; border-radius: 10px;">
@@ -421,23 +567,54 @@
         <button type="submit" class="btn-primary" style="background: var(--gradient-gold); color: #000; font-weight: 900; border: 2px solid #fff; margin-top: 4px;">
           💾 Profil & Namen speichern
         </button>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 12px;">
+          <button type="button" class="btn-primary" onclick="ProfileModule.openProfileSelectModal(true)" style="flex: 1; padding: 8px 10px; font-size: 12px; background: #334155; border: 1.5px solid #64748b; color: #fff; font-weight: 800;">
+            👤 Profil wechseln
+          </button>
+          <button type="button" class="btn-primary" onclick="ProfileModule.logout()" style="flex: 1; padding: 8px 10px; font-size: 12px; background: rgba(225,29,72,0.25); border: 1.5px solid #f43f5e; color: #fda4af; font-weight: 800;">
+            🚪 Abmelden (Code)
+          </button>
+        </div>
+
+        <button type="button" class="btn-primary" id="myProfileAdminBtn" onclick="ProfileModule.openAdminModal()" style="display: none; margin-top: 8px; width: 100%; padding: 8px 10px; font-size: 12px; background: rgba(255,204,0,0.18); border: 1.5px solid var(--walibi-yellow); color: var(--walibi-yellow); font-weight: 900;">
+          👑 Admin-Konsole öffnen (grossek)
+        </button>
       </form>
     </div>
   </div>
 
   <!-- ONBOARDING & ERST-START MODAL (WIRD NUR BEIM ERSTEN PARK-BESUCH ANGEZEIGT) -->
   <div id="profileSelectModal" class="modal-overlay hidden">
-    <div class="modal-container">
+    <div class="modal-container" style="max-width: 440px;">
       <div class="modal-header">
-        <h2 class="modal-title">Wer bist du?</h2>
+        <h2 class="modal-title">🎉 Willkommen bei Walibi '26!</h2>
         <button class="btn-close-modal" onclick="document.getElementById('profileSelectModal').classList.add('hidden')">✕</button>
       </div>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Wähle deinen Spieler-Account oder erstelle einen neuen Teilnehmer:</p>
-      
-      <div id="profilePlayersList" style="max-height: 280px; overflow-y: auto; margin-bottom: 14px;"></div>
 
-      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
-        <button class="btn-primary" id="btnOpenCreatePlayer" style="background: var(--gradient-gold); color: #000 !important; font-weight: 900; border: 2.5px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">➕ NEUEN SPIELER ANLEGEN</button>
+      <div style="text-align: center; padding: 6px 0 10px 0;">
+        <div style="font-size: 42px; margin-bottom: 6px;">👤✨</div>
+        <h3 style="color: #fff; font-size: 17px; margin-bottom: 6px;">Bist du neu hier?</h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin: 0 auto 14px auto;">
+          Erstelle jetzt dein Profil (Name, Haus & Kult-Avatar), um direkt mitzuspielen und Punkte zu sammeln!
+        </p>
+
+        <button class="btn-primary" id="btnOpenCreatePlayer" style="background: var(--gradient-gold); color: #000 !important; font-weight: 900; border: 2.5px solid #fff; font-size: 15px; padding: 14px 20px; box-shadow: 0 0 20px rgba(255,204,0,0.5);">
+          ➕ NEUE PERSON / PROFIL ANLEGEN
+        </button>
+      </div>
+
+      <div id="existingPlayersSection" class="hidden" style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px; margin-top: 10px;">
+        <div style="font-size: 11px; font-weight: 800; color: var(--walibi-yellow); text-transform: uppercase; margin-bottom: 8px; text-align: center;">
+          Oder bestehendes Profil wählen:
+        </div>
+        <div id="profilePlayersList" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 10px; margin-top: 12px; text-align: center;">
+        <button type="button" onclick="ProfileModule.logout()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; text-decoration: underline;">
+          🚪 Anderen Zugangscode eingeben
+        </button>
       </div>
     </div>
   </div>
@@ -461,6 +638,48 @@
           <select id="newPlayerHouse" class="form-select"></select>
         </div>
 
+        <!-- GESCHLECHT -->
+        <div class="form-group">
+          <label class="form-label">Kategorie (Mr. / Mrs. Walibi):</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="gender-pill-btn active" id="newGenderMale" onclick="ProfileModule.setNewGender('male')" style="flex: 1; padding: 8px 12px; font-size: 12.5px; font-weight: 800; border-radius: 8px; border: 1.5px solid #60a5fa; background: rgba(59, 130, 246, 0.2); color: #93c5fd; cursor: pointer;">
+              ♂️ Mr. Walibi
+            </button>
+            <button type="button" class="gender-pill-btn" id="newGenderFemale" onclick="ProfileModule.setNewGender('female')" style="flex: 1; padding: 8px 12px; font-size: 12.5px; font-weight: 800; border-radius: 8px; border: 1.5px solid #f472b6; background: rgba(244, 114, 182, 0.2); color: #fbcfe8; cursor: pointer;">
+              ♀️ Mrs. Walibi
+            </button>
+          </div>
+          <input type="hidden" id="newPlayerGender" value="male" />
+        </div>
+
+        <!-- 20 RPG CHARAKTER-KLASSEN -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 2px solid var(--walibi-yellow); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 900; color: var(--walibi-yellow); text-transform: uppercase;">🎭 RPG-Klasse (20 Klassen):</span>
+            <span id="newPlayerClassCategoryTag" class="map-tag-pill" style="font-size: 10px;">Action</span>
+          </div>
+          <select id="newPlayerClass" class="form-select" style="margin-bottom: 8px; font-weight: 800;" onchange="ProfileModule.handleNewPlayerClassChange(this.value)"></select>
+          <div id="newPlayerClassInfoBox" style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 8px 10px; font-size: 11.5px; line-height: 1.35;"></div>
+        </div>
+
+        <!-- 5 FUN-STATUSWERTE (1-10 SKALA) -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 2px solid #334155; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+          <div style="font-size: 11px; font-weight: 900; color: #38bdf8; text-transform: uppercase; margin-bottom: 4px;">📊 5 Statuswerte (Fun-Stats 1–10):</div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Passe deine Stärken & Schwächen für die Tour an:</p>
+          <div id="newPlayerRpgStatsContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- PEGEL-TURNIER OPT-IN CHECKBOX -->
+        <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid var(--walibi-yellow); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="newPlayerPromilleOptIn" style="width: 18px; height: 18px; accent-color: var(--walibi-yellow); cursor: pointer;" checked />
+            <div>
+              <div style="font-weight: 800; font-size: 12px; color: var(--walibi-yellow);">🍺 Am Pegel-Turnier teilnehmen</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">Eigene Messwerte im Gruppen-Leaderboard (Highscore & Konstanz) teilen.</div>
+            </div>
+          </label>
+        </div>
+
         <div class="form-group">
           <label class="form-label">Avatar wählen oder Selfie aufnehmen:</label>
           <div style="display: flex; gap: 8px; margin-bottom: 8px;">
@@ -480,7 +699,13 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-primary" style="margin-top: 8px;">Mitspielen! 🚀</button>
+        <button type="submit" class="btn-primary" style="margin-top: 8px; background: var(--gradient-gold); color: #000; font-weight: 900; border: 2.5px solid #fff;">Mitspielen! 🚀</button>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 10px; margin-top: 12px; text-align: center;">
+          <button type="button" onclick="ProfileModule.logout()" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; text-decoration: underline;">
+            🚪 Anderen Zugangscode eingeben / Abmelden
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -537,9 +762,67 @@
         <textarea id="wildcardDescInput" class="form-textarea game-input" placeholder="Kurze Beschreibung, was du gemacht hast..."></textarea>
       </div>
 
-      <!-- 🟢🔴 ERGEBNIS-AUSWAHL (ERFOLG VS. MINUSPUNKTE / MALUS) -->
+      <!-- 📈 PROMILLE-MESSGERÄT & BONUS-RECHNER SECTION -->
+      <div id="questPromilleSection" class="hidden" style="margin-bottom: 12px; background: rgba(225, 29, 72, 0.15); padding: 12px; border-radius: 12px; border: 2px solid #e11d48;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="form-label" style="color: #fda4af; font-size: 13px; font-weight: 900; margin: 0;">
+            📈 Gemessener Promille-Wert:
+          </label>
+          <span class="badge-gold" style="font-size: 11px; padding: 3px 8px; font-weight: 900;">+5 Pkt je +0.10‰</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="position: relative; flex: 1;">
+            <input type="number" id="questPromilleInput" class="form-input game-input" step="0.05" min="0.5" max="4.0" placeholder="z. B. 1.25" style="font-size: 18px; font-weight: 900; text-align: center; color: #ffcc00; border-color: #e11d48;" oninput="QuestsModule.handlePromilleInput(this.value)" />
+            <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-weight: 800; color: #fda4af; font-size: 14px;">‰</span>
+          </div>
+          <div id="questPromilleBonusBadge" style="background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); text-align: center; min-width: 100px;">
+            <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">XP / Punkte</div>
+            <div id="questPromilleCalculatedPts" style="font-size: 16px; font-weight: 900; color: var(--walibi-yellow);">+40 Pkt</div>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: #fecdd3; margin-top: 6px; line-height: 1.3;">
+          📸 <strong>WICHTIG:</strong> Bitte lade unten ein Beweisfoto deines Alkoholtesters / Messgeräts hoch!
+        </div>
+      </div>
+
+      <!-- ⏱️ INTERAKTIVE 60-SEKUNDEN STOPPUHR SECTION (FÜR WEGZOLL) -->
+      <div id="questStopwatchSection" class="hidden" style="margin-bottom: 12px; background: rgba(14, 165, 233, 0.15); padding: 12px; border-radius: 12px; border: 2px solid #0ea5e9; text-align: center;">
+        <div style="font-size: 11px; font-weight: 900; color: #7dd3fc; text-transform: uppercase; margin-bottom: 4px;">
+          ⏱️ 60-Sekunden Maut-Timer
+        </div>
+        <div id="stopwatchDisplay" style="font-size: 38px; font-family: 'Courier New', monospace; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(14,165,233,0.8); margin: 4px 0;">
+          01:00
+        </div>
+        <div style="display: flex; justify-content: center; gap: 8px; margin-top: 6px;">
+          <button type="button" class="btn-primary" id="btnStartStopwatch" onclick="QuestsModule.toggleStopwatch()" style="background: #0ea5e9; color: #000; font-weight: 900; padding: 6px 14px; font-size: 13px;">
+            ▶️ Start
+          </button>
+          <button type="button" class="btn-primary" onclick="QuestsModule.resetStopwatch()" style="background: rgba(255,255,255,0.15); color: #fff; padding: 6px 12px; font-size: 13px;">
+            🔄 Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- 👑 END-BOSS 4-KÄMPFE DUELLE SECTION -->
+      <div id="questEndBossSection" class="hidden" style="margin-bottom: 12px; background: linear-gradient(135deg, rgba(255,204,0,0.15), rgba(225,29,72,0.25)); padding: 12px; border-radius: 12px; border: 2.5px solid var(--walibi-yellow);">
+        <div style="font-size: 13px; font-weight: 900; color: var(--walibi-yellow); text-transform: uppercase; margin-bottom: 8px; text-align: center;">
+          ⚔️ Wähle das End-Boss Finale:
+        </div>
+        <div id="endBossCategorySelector" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;">
+          <button type="button" class="end-boss-tab-btn active" onclick="QuestsModule.selectBossDuel('overall')" id="bossDuelTab_overall">🏆 Gesamt-Finale</button>
+          <button type="button" class="end-boss-tab-btn" onclick="QuestsModule.selectBossDuel('mr')" id="bossDuelTab_mr">🎩 Mr. Walibi</button>
+          <button type="button" class="end-boss-tab-btn" onclick="QuestsModule.selectBossDuel('mrs')" id="bossDuelTab_mrs">👑 Mrs. Walibi</button>
+          <button type="button" class="end-boss-tab-btn" onclick="QuestsModule.selectBossDuel('promille')" id="bossDuelTab_promille">🍺 Promille-König</button>
+        </div>
+        
+        <div id="endBossFighterContainer">
+          <!-- Dynamisch per JS generierte Finalisten-Karten zum Auswählen des Siegers -->
+        </div>
+      </div>
+
+      <!-- 🟢🔴 ERGEBNIS-AUSWAHL (ERFOLG VS. MINUSPUNKTE / MALUS / FAHRGESCHÄFT) -->
       <div id="questOutcomeSection" class="hidden" style="margin-bottom: 12px; background: rgba(15, 23, 42, 0.8); padding: 10px 12px; border-radius: 12px; border: 2px solid var(--walibi-yellow);">
-        <label class="form-label" style="color: var(--walibi-yellow); font-size: 12px; margin-bottom: 6px;">🎯 Wie ist die Challenge ausgegangen?</label>
+        <label class="form-label" id="questOutcomeLabel" style="color: var(--walibi-yellow); font-size: 12px; margin-bottom: 6px;">🎯 Wie ist die Challenge ausgegangen?</label>
         <div id="questOutcomeOptionsList" style="display: flex; flex-direction: column; gap: 6px;">
           <!-- Dynamisch per JS generiert -->
         </div>
@@ -604,26 +887,98 @@
       <div id="questCompletedByContainer" style="margin-bottom: 14px;"></div>
 
       <!-- GIANT 3D ARCADE SUBMIT BUTTON -->
-      <button class="btn-arcade-submit" id="btnSubmitQuest">
+      <button type="button" class="btn-arcade-submit" id="btnSubmitQuest" onclick="QuestsModule.submitQuestCompletion()">
         <span class="arcade-btn-text">🚀 MISSION ABSCHLIESSEN! 🚀</span>
         <div class="arcade-btn-glow"></div>
       </button>
     </div>
   </div>
 
-  <!-- 6. SCHNELLZÄHLER MODAL -->
-  <div id="counterModal" class="modal-overlay hidden">
-    <div class="modal-container">
+  <!-- 6. 🚨 PROMILLE-MESSUNG EINTRAGEN MODAL (PROMILLETEST-GERÄT) -->
+  <div id="promilleLogModal" class="modal-overlay hidden" style="z-index: 520;">
+    <div class="modal-container" style="max-width: 440px; border: 3px solid var(--walibi-yellow);">
       <div class="modal-header">
-        <h2 class="modal-title">🍺 Flüssige Währung</h2>
-        <button class="btn-close-modal" id="closeCounterModal">✕</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">🚨🍺</span>
+          <div>
+            <h2 class="modal-title" style="color: var(--walibi-yellow); font-size: 18px; line-height: 1.2;">Promille-Messung erfassen</h2>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">Offizielles Testgerät-Tracking (+10 XP)</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="closePromilleLogModal" onclick="document.getElementById('promilleLogModal').classList.add('hidden')">✕</button>
       </div>
 
-      <div id="counterUserSummary" style="font-size: 13px; margin-bottom: 8px; color: var(--text-muted); font-weight: 700;"></div>
+      <form id="promilleLogForm" onsubmit="FeedModule.submitPromilleReading(event)">
+        <!-- GROSSES MESSWERT-DISPLAY -->
+        <div style="background: rgba(0,0,0,0.6); border: 2.5px solid var(--walibi-yellow); border-radius: 14px; padding: 14px; text-align: center; margin-bottom: 12px; box-shadow: 0 0 20px rgba(255,204,0,0.25);">
+          <span style="font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Gemessener Promille-Wert:</span>
+          
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 8px 0;">
+            <button type="button" class="btn-primary" onclick="FeedModule.adjustPromilleInput(-0.1)" style="width: 44px; height: 44px; font-size: 20px; font-weight: 900; padding: 0; background: #334155; border-radius: 12px;">-</button>
+            <div style="position: relative; display: inline-block;">
+              <input type="number" id="inputPromilleValue" step="0.01" min="0" max="4.0" placeholder="0.00" style="width: 140px; height: 54px; font-size: 32px; font-weight: 900; text-align: center; border-radius: 12px; background: #000; border: 2px solid var(--walibi-yellow); color: var(--walibi-yellow); font-family: var(--font-body);" required />
+              <span style="position: absolute; right: 10px; top: 16px; font-weight: 900; font-size: 16px; color: var(--walibi-yellow);">‰</span>
+            </div>
+            <button type="button" class="btn-primary" onclick="FeedModule.adjustPromilleInput(0.1)" style="width: 44px; height: 44px; font-size: 20px; font-weight: 900; padding: 0; background: var(--gradient-gold); color: #000; border-radius: 12px;">+</button>
+          </div>
 
-      <div class="counter-grid" id="counterGridContainer">
-        <!-- Gefüllt per JS -->
-      </div>
+          <!-- SCHNELL-WAHL BUTTONS -->
+          <div style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 6px;">
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(0.0)">0.0‰</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(0.3)">0.3‰ 🍻</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(0.5)">0.5‰ 🍺</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(0.8)">0.8‰ 🎢</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(1.0)">1.0‰ ⚓</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(1.3)">1.3‰ 🦅</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(1.5)">1.5‰ ⚔️</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(1.8)">1.8‰ 👑</button>
+            <button type="button" class="feed-filter-btn" style="padding: 3px 7px; font-size: 11px;" onclick="FeedModule.setPromilleInputPreset(2.0)">2.0‰ 💀</button>
+          </div>
+        </div>
+
+        <!-- UHRZEIT & NOTIZ -->
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-bottom: 10px;">
+          <div>
+            <label class="form-label" style="font-size: 11px;">⏰ Uhrzeit:</label>
+            <input type="time" id="inputPromilleTime" class="form-input" required />
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 11px;">📝 Notiz / Situation:</label>
+            <input type="text" id="inputPromilleNote" class="form-input" placeholder="z. B. Nach Goliath & 2 Bier" />
+          </div>
+        </div>
+
+        <!-- BEWEISFOTO VOM DISPLAY (OPTIONAL) -->
+        <div style="margin-bottom: 12px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.12); padding: 10px; border-radius: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label class="form-label" style="margin-bottom: 0; font-size: 11px;">📸 Foto vom Display (Optional):</label>
+            <span style="font-size: 10px; color: var(--walibi-yellow); font-weight: 800;">Beweis-Foto</span>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="btn-primary" style="flex: 1; padding: 6px 8px; font-size: 11px; background: var(--gradient-red);" onclick="CameraModule.open({ title: '📸 Display fotografieren', facingMode: 'environment', onCapture: (b64) => FeedModule.setPromillePhoto(b64) })">
+              🤳 Kamera
+            </button>
+            <label class="btn-primary" style="flex: 1; padding: 6px 8px; font-size: 11px; background: #334155; text-align: center; cursor: pointer;">
+              🖼️ Galerie
+              <input type="file" accept="image/*" id="inputPromilleGallery" style="display: none;" onchange="FeedModule.handlePromilleGalleryUpload(event)" />
+            </label>
+          </div>
+          <img id="previewPromillePhoto" class="camera-preview-img hidden" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 8px; margin-top: 6px;" alt="Vorschau" />
+          <button type="button" id="btnRemovePromillePhoto" class="btn-primary hidden" onclick="FeedModule.removePromillePhoto()" style="background: #475569; padding: 4px 8px; font-size: 10px; margin-top: 4px; width: 100%;">Foto entfernen</button>
+        </div>
+
+        <!-- CHECKBOX: IM FEED TEILEN -->
+        <div style="margin-bottom: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+            <input type="checkbox" id="checkPromilleShareFeed" style="width: 17px; height: 17px; accent-color: var(--walibi-yellow);" checked />
+            <span style="font-size: 12px; font-weight: 700; color: #e2e8f0;">📢 Als Update im Live-Feed teilen</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary" style="background: var(--gradient-gold); color: #000; font-weight: 900; border: 2.5px solid #fff; font-size: 15px;">
+          💾 MESSWERT SPEICHERN (+10 XP)
+        </button>
+      </form>
     </div>
   </div>
 
@@ -649,7 +1004,16 @@
         <button class="btn-close-modal" id="closePlayerDetailModal">✕</button>
       </div>
 
-      <div style="font-size: 22px; font-weight: 900; color: var(--walibi-yellow); margin-bottom: 12px;" id="modalPlayerPoints">0 Punkte</div>
+      <div style="font-size: 22px; font-weight: 900; color: var(--walibi-yellow); margin-bottom: 10px;" id="modalPlayerPoints">0 Punkte</div>
+
+      <!-- RPG CHARAKTER-KARTE & STATUSWERTE -->
+      <div id="modalPlayerRpgCard" style="margin-bottom: 12px;"></div>
+
+      <!-- FREIGESCHALTETE TITEL -->
+      <div id="modalPlayerTitlesSection" style="margin-bottom: 12px;">
+        <label class="form-label" style="margin-bottom: 6px;">🎖️ Freigeschaltete Titel:</label>
+        <div id="modalPlayerTitlesList"></div>
+      </div>
 
       <label class="form-label">Abgeschlossene Quests:</label>
       <div id="modalPlayerQuestsList" style="display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto;"></div>
@@ -719,11 +1083,27 @@
           </div>
         </button>
 
+        <button class="quick-menu-card" onclick="app.closeQuickMenu(); ProfileModule.openCharacterLoreModal();" style="border-color: #38bdf8; background: rgba(56,189,248,0.15);">
+          <span class="quick-menu-icon">🎭</span>
+          <div class="quick-menu-text">
+            <span class="quick-menu-title" style="color: #38bdf8;">Kult-Charaktere & Avatar-Lexikon</span>
+            <span class="quick-menu-desc">23 Steckbriefe, Historie, Sprüche & Stärken</span>
+          </div>
+        </button>
+
         <button class="quick-menu-card" onclick="app.closeQuickMenu(); ProfileModule.openMyProfileModal();">
           <span class="quick-menu-icon">⚙️</span>
           <div class="quick-menu-text">
             <span class="quick-menu-title">Mein Profil & Haus</span>
             <span class="quick-menu-desc">Name, Selfie & Statistiken anpassen</span>
+          </div>
+        </button>
+
+        <button class="quick-menu-card" onclick="app.closeQuickMenu(); SympathyModule.openVoteModal();" style="border-color: #ec4899; background: rgba(236,72,153,0.15);">
+          <span class="quick-menu-icon">💖</span>
+          <div class="quick-menu-text">
+            <span class="quick-menu-title" style="color: #f472b6;">Sympathie-Voting & Zeugnis</span>
+            <span class="quick-menu-desc">Eisbrecher-Punkte vergeben & Sauftour-Zeugnis '26</span>
           </div>
         </button>
 
@@ -742,6 +1122,14 @@
           </button>
         </div>
 
+        <button class="quick-menu-card admin-only-card" id="menuHappyHourBtn" style="display: none; border-color: #ffcc00; background: linear-gradient(135deg, rgba(245,158,11,0.25), rgba(225,29,72,0.25));" onclick="app.closeQuickMenu(); ProfileModule.adminToggleHappyHour();">
+          <span class="quick-menu-icon">⚡🍻</span>
+          <div class="quick-menu-text">
+            <span class="quick-menu-title" style="color: var(--walibi-yellow);">2X Happy Hour zünden</span>
+            <span class="quick-menu-desc">60 Min doppelte Punkte & Konfetti</span>
+          </div>
+        </button>
+
         <button class="quick-menu-card admin-only-card" id="menuAdminBtn" style="display: none; border-color: var(--walibi-yellow); background: rgba(255,204,0,0.18);" onclick="app.closeQuickMenu(); ProfileModule.openAdminModal();">
           <span class="quick-menu-icon">👑</span>
           <div class="quick-menu-text">
@@ -754,7 +1142,48 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 12. 📷 IN-APP LIVE KAMERA MODAL            -->
+  <!-- 14. 🎭 KULT-CHARAKTERE & AVATAR-LEXIKON    -->
+  <!-- ========================================== -->
+  <div id="characterLoreModal" class="modal-overlay hidden" style="z-index: 520;">
+    <div class="modal-container" style="max-width: 480px; max-height: 90vh; overflow-y: auto; border: 3px solid var(--walibi-yellow);">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">🎭📖</span>
+          <div>
+            <h2 class="modal-title" style="color: var(--walibi-yellow); font-size: 18px; line-height: 1.2;">Avatar- & Charakter-Lexikon</h2>
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 700;">23 Kult-Helden, Steckbriefe & Sprüche</div>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="document.getElementById('characterLoreModal').classList.add('hidden')">✕</button>
+      </div>
+      <div id="characterLoreListContainer">
+        <!-- Dynamisch per ProfileModule.renderCharacterLoreList() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 15. 🔍 AVATAR LUPEN-ZOOM LIGHTBOX MODAL    -->
+  <!-- ========================================== -->
+  <div id="avatarLensLightboxModal" class="modal-overlay hidden" style="z-index: 560; background: rgba(5,8,16,0.94);" onclick="ProfileModule.closeAvatarLensModal()">
+    <div class="modal-container" style="max-width: 360px; text-align: center; border: 3.5px solid var(--walibi-yellow); box-shadow: 0 0 45px rgba(255,204,0,0.6);" onclick="event.stopPropagation()">
+      <div class="modal-header" style="justify-content: flex-end; margin-bottom: 6px;">
+        <button class="btn-close-modal" onclick="ProfileModule.closeAvatarLensModal()">✕</button>
+      </div>
+      <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+        <img id="lensModalAvatarImg" src="" style="width: 220px; height: 220px; border-radius: 50%; object-fit: cover; border: 4px solid var(--walibi-yellow); box-shadow: 0 0 30px rgba(255,204,0,0.7);" alt="Zoom Avatar" />
+      </div>
+      <h3 id="lensModalAvatarTitle" style="color: #fff; font-size: 21px; font-family: var(--font-headline); letter-spacing: 0.8px; margin-bottom: 4px;">Name</h3>
+      <div id="lensModalAvatarSubtitle" style="color: var(--walibi-pink); font-size: 13px; font-weight: 800; margin-bottom: 12px;">Untertitel</div>
+      <div id="lensModalAvatarQuote" style="background: rgba(0,0,0,0.5); border-left: 3.5px solid var(--walibi-yellow); padding: 8px 12px; border-radius: 0 8px 8px 0; font-size: 12.5px; font-style: italic; color: var(--walibi-yellow); font-weight: 700; margin-bottom: 16px; text-align: left;"></div>
+      <button type="button" id="btnLensModalPick" class="btn-primary" style="background: var(--gradient-gold); color: #000; font-weight: 900; border: 2.5px solid #fff; font-size: 16px; box-shadow: 0 0 16px rgba(255,204,0,0.5);">
+        ✅ DIESEN AVATAR WÄHLEN
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 12. 📷 IN-APP LIVE KAMERA & VIDEO MODAL     -->
   <!-- ========================================== -->
   <div id="inAppCameraModal" class="modal-overlay hidden" style="z-index: 550; padding: 0; background: #000;">
     <div class="inapp-camera-container">
@@ -762,14 +1191,27 @@
       <div class="camera-top-bar">
         <button class="camera-icon-btn" id="closeInAppCamera" title="Kamera schließen">✕</button>
         <span class="camera-modal-title" id="cameraModalTitle">📸 Walibi Live-Kamera</span>
-        <button class="camera-icon-btn" id="btnCameraTimer" title="3s Selbstauslöser">⏱️</button>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <label class="camera-icon-btn" title="Mit nativer Video-Kamera aufnehmen" style="cursor: pointer; background: rgba(225,29,72,0.3); border-color: #f43f5e;" onclick="document.getElementById('cameraModalFallbackVideoInput').click()">
+            🎥
+          </label>
+          <button class="camera-icon-btn" id="btnCameraTimer" title="3s Selbstauslöser">⏱️</button>
+        </div>
       </div>
 
       <!-- VIEWFINDER / LIVE STREAM BEREICH -->
       <div class="camera-viewfinder-wrapper">
         <video id="cameraLiveStream" class="camera-live-video" autoplay playsinline muted></video>
         <img id="cameraFreezePreview" class="camera-freeze-img hidden" alt="Aufgenommenes Foto" />
+        <video id="cameraFreezeVideoPreview" class="camera-freeze-video hidden" controls playsinline loop></video>
         
+        <!-- LIVE VIDEO RECORDING INDICATOR -->
+        <div id="cameraRecordingIndicator" class="camera-rec-badge hidden">
+          <span class="rec-dot"></span>
+          <span id="cameraRecTime">REC 00:00</span>
+          <span class="rec-limit">/ 00:30</span>
+        </div>
+
         <!-- COUNTDOWN OVERLAY -->
         <div id="cameraTimerOverlay" class="camera-timer-overlay hidden">
           <span id="cameraTimerCount" class="camera-timer-number">3</span>
@@ -789,19 +1231,29 @@
 
         <!-- FALLBACK BOX FALLS KEIN WEBRTC ZUGRIFF -->
         <div id="cameraFallbackBox" class="camera-fallback-box hidden">
-          <div style="font-size: 42px; margin-bottom: 8px;">📷</div>
+          <div style="font-size: 42px; margin-bottom: 8px;">📷 / 🎥</div>
           <div id="cameraFallbackMsg" style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 16px;">Kamera wird vorbereitet...</div>
           <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px;">
             <label class="btn-primary" style="background: var(--gradient-red); cursor: pointer; text-align: center; font-size: 14px;">
-              📸 Kamera öffnen
+              📸 Foto aufnehmen
               <input type="file" accept="image/*" capture="environment" id="cameraModalFallbackCameraInput" style="display: none;" />
             </label>
+            <label class="btn-primary" style="background: linear-gradient(135deg, #e11d48, #9333ea); cursor: pointer; text-align: center; font-size: 14px; border: 1.5px solid #ffcc00;">
+              🎥 Video aufnehmen
+              <input type="file" accept="video/*" capture="environment" id="cameraModalFallbackVideoInput" style="display: none;" />
+            </label>
             <label class="btn-primary" style="background: #334155; cursor: pointer; text-align: center; font-size: 14px;">
-              🖼️ Aus Galerie wählen
-              <input type="file" accept="image/*" id="cameraModalGalleryInput" style="display: none;" />
+              🖼️ Aus Galerie wählen (Foto / Video)
+              <input type="file" accept="image/*,video/*" id="cameraModalGalleryInput" style="display: none;" />
             </label>
           </div>
         </div>
+      </div>
+
+      <!-- KAMERA MODUS WECHSLER (FOTO / VIDEO) -->
+      <div class="camera-mode-switcher" id="cameraModeSwitcher">
+        <button type="button" class="camera-mode-tab active" id="btnCameraModePhoto" onclick="CameraModule.switchMode('photo')">📸 FOTO</button>
+        <button type="button" class="camera-mode-tab" id="btnCameraModeVideo" onclick="CameraModule.switchMode('video')">🎥 VIDEO</button>
       </div>
 
       <!-- KAMERA STEUERUNG (LIVE) -->
@@ -811,8 +1263,8 @@
           <span style="font-size: 10px; font-weight: 800;">Galerie</span>
         </button>
 
-        <button class="camera-shutter-btn" id="btnCameraShutter" title="Foto schießen">
-          <div class="shutter-inner-ring"></div>
+        <button class="camera-shutter-btn" id="btnCameraShutter" title="Auslöser">
+          <div class="shutter-inner-ring" id="cameraShutterInner"></div>
         </button>
 
         <button class="camera-side-action-btn" id="btnCameraSwitchFacing" title="Kamera wechseln (Front/Back)">
@@ -821,7 +1273,7 @@
         </button>
       </div>
 
-      <!-- KAMERA BESTÄTIGUNG (NACH DEM FOTO) -->
+      <!-- KAMERA BESTÄTIGUNG (NACH DEM FOTO / VIDEO) -->
       <div class="camera-bottom-bar hidden" id="cameraConfirmControls" style="display: flex; gap: 12px; justify-content: center; padding: 18px 24px;">
         <button class="btn-primary" id="btnCameraRetake" style="flex: 1; background: #334155; border: 2px solid #64748b; font-size: 14px; font-weight: 800;">
           🔄 Neu
@@ -834,24 +1286,25 @@
   </div>
 
   <!-- JAVASCRIPT MODULES -->
-  <script src="js/audio.js"></script>
-  <script src="js/data/rulesData.js"></script>
-  <script src="js/data/mascotsData.js"></script>
-  <script src="js/data/partyQuotesData.js"></script>
-  <script src="js/data/attractionsData.js"></script>
-  <script src="js/data/questsData.js"></script>
-  <script src="js/data/parkMapData.js"></script>
-  <script src="js/camera.js"></script>
-  <script src="js/store.js"></script>
-  <script src="js/profile.js"></script>
-  <script src="js/parkMap.js"></script>
-  <script src="js/parkGuide.js"></script>
-  <script src="js/quests.js"></script>
-  <script src="js/counter.js"></script>
-  <script src="js/feed.js"></script>
-  <script src="js/leaderboard.js"></script>
-  <script src="js/awards.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/audio.js?v=2026_v25"></script>
+  <script src="js/data/rulesData.js?v=2026_v25"></script>
+  <script src="js/data/rpgData.js?v=2026_v25"></script>
+  <script src="js/data/mascotsData.js?v=2026_v25"></script>
+  <script src="js/data/partyQuotesData.js?v=2026_v25"></script>
+  <script src="js/data/attractionsData.js?v=2026_v25"></script>
+  <script src="js/data/questsData.js?v=2026_v25"></script>
+  <script src="js/data/parkMapData.js?v=2026_v25"></script>
+  <script src="js/camera.js?v=2026_v25"></script>
+  <script src="js/store.js?v=2026_v25"></script>
+  <script src="js/profile.js?v=2026_v25"></script>
+  <script src="js/parkMap.js?v=2026_v25"></script>
+  <script src="js/parkGuide.js?v=2026_v25"></script>
+  <script src="js/quests.js?v=2026_v25"></script>
+  <script src="js/counter.js?v=2026_v25"></script>
+  <script src="js/feed.js?v=2026_v25"></script>
+  <script src="js/leaderboard.js?v=2026_v25"></script>
+  <script src="js/awards.js?v=2026_v25"></script>
+  <script src="js/app.js?v=2026_v25"></script>
 
 </body>
 </html>
